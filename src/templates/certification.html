@@ -1,0 +1,202 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Demo Certification Exam</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        #timer { font-size: 20px; font-weight: bold; margin-bottom: 20px; }
+        .fixed-submit {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Demo Certification Exam</h1>
+
+<label>Number of Questions:
+    <input type="number" id="questionCount" placeholder="Default 125">
+</label>
+<br><br>
+
+<label>Duration (minutes):
+    <input type="number" id="durationMinutes" placeholder="Default 90">
+</label>
+<br><br>
+
+<button onclick="startExam()">Start Exam</button>
+<button onclick="pauseExam()">Pause</button>
+<button onclick="resumeExam()">Resume</button>
+<button onclick="restartExam()">Restart</button>
+
+<div id="timer"></div>
+<div id="questions"></div>
+
+<button class="fixed-submit" onclick="submitExam()">Submit</button>
+
+<script>
+    let sessionId = null;
+    let duration = 90 * 60;
+    let remaining = duration;
+    let timerInterval = null;
+    const certification_version = {{version}};
+
+    function startExam() {
+        const questionCount = document.getElementById("questionCount").value || 124;
+        const durationMinutes = document.getElementById("durationMinutes").value || 90;
+
+        fetch("/start-session", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                certification_version: certification_version,
+                question_count: questionCount,
+                duration_minutes: durationMinutes
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            sessionId = data.session_id;
+            duration = data.duration;
+            remaining = duration;
+            loadSession();
+        });
+    }
+
+    function loadSession() {
+        fetch(`/session/${sessionId}`)
+        .then(r => r.json())
+        .then(data => {
+            renderQuestions(data.questions);
+            startTimer();
+        });
+    }
+
+    function renderQuestions(questions) {
+        const container = document.getElementById("questions");
+        container.innerHTML = "";
+
+        questions.forEach(question => {
+            let html = "";
+
+            html += `<div data-qid="${question.id}"><h3>Question ${question.id}</h3>`;
+            html += `<p>Module: ${question.module}</p>`;
+            html += `<p>${question.description}</p>`;
+
+            question.images.forEach((image, index) => {
+                if (image.startsWith('data:image')) {
+                    html += `<img src="${ image }" width="50%"/>`;
+                } else {
+                    html += `<img src="data:image/png;base64, ${ image }" width="50%"/>`;
+                }
+            })
+
+            html += "<div>"
+
+            question.choices.forEach((choice, index) => {
+                html += `
+                    <label>
+                        <input type="radio"
+                            name="q${question.id}"
+                            value="${index}"
+                            onchange="saveAnswer('${question.id}', ${index})">
+                        ${choice.text}
+                    </label><br>
+                `;
+            });
+
+            html += "</div></div><hr>";
+
+            container.innerHTML += html;
+        });
+    }
+
+    function saveAnswer(questionId, index) {
+        fetch(`/answer/${sessionId}/${questionId}`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({choice_index: index})
+        });
+    }
+
+    function startTimer() {
+        timerInterval = setInterval(() => {
+            remaining--;
+            updateTimer();
+            if (remaining <= 0) {
+                clearInterval(timerInterval);
+                submitExam();
+            }
+        }, 1000);
+    }
+
+    function updateTimer() {
+        const minutes = Math.floor(remaining / 60);
+        const seconds = remaining % 60;
+        document.getElementById("timer").innerText =
+            `Time Remaining: ${minutes}:${seconds.toString().padStart(2, "0")}`;
+    }
+
+    function pauseExam() {
+        clearInterval(timerInterval);
+    }
+
+    function resumeExam() {
+        startTimer();
+    }
+
+    function restartExam() {
+        location.reload();
+    }
+
+    function submitExam() {
+        clearInterval(timerInterval);
+
+        fetch(`/submit/${sessionId}`, { method: "POST" })
+        .then(r => r.json())
+        .then(report => {
+            report.details.forEach(detail => {
+                const qBlock = document.querySelector(`[data-qid="${detail.question_id}"]`);
+                const radios = qBlock.querySelectorAll("input[type=radio]");
+
+                radios.forEach(radio => {
+                    const index = parseInt(radio.value);
+
+                    if (index === detail.correct_index) {
+                        radio.parentElement.style.color = "green";
+                        radio.parentElement.style.fontWeight = "bold";
+                    }
+
+                    if (detail.selected_index !== null &&
+                        index === detail.selected_index &&
+                        !detail.is_correct) {
+                        radio.parentElement.style.color = "red";
+                    }
+
+                    radio.disabled = true;
+                });
+            });
+
+            alert(
+                `Exam Finished
+                
+                Score: ${report.score}
+                Correct: ${report.correct}
+                Wrong: ${report.wrong}
+                Percentage: ${report.percentage}%
+                Result: ${report.passed ? "PASSED" : "FAILED"}`
+            );
+        });
+    }
+</script>
+
+</body>
+</html>

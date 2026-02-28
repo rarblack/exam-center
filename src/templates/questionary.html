@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Practice Quiz</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        .question { margin-bottom: 25px; border-bottom:1px solid #ddd; padding-bottom:15px; }
+        .correct { color: green; font-weight:bold; }
+        .wrong { color: red; font-weight:bold; }
+        .submit-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        input[type=text] { width:100%; padding:8px; margin-bottom:20px; }
+    </style>
+</head>
+<body>
+
+<h1>Practice Quiz</h1>
+
+<input type="text" id="searchBox" placeholder="Search question description..." oninput="searchQuestions()">
+
+<div id="questions">
+
+{% for q in questions %}
+<div class="question" data-description="{{ q.description | lower }}">
+    <h3>Question {{ q.id }}</h3>
+    <p>{{ q.description }}</p>
+
+    {% for choice in q.choices %}
+        <label>
+            <input type="radio"
+                   name="q{{ q.id }}"
+                   data-correct="{{ choice.answer }}"
+                   onclick="checkAnswer(this)">
+            {{ choice.text }}
+        </label><br>
+    {% endfor %}
+
+    <p class="result"></p>
+</div>
+{% endfor %}
+
+</div>
+
+<button class="submit-btn" onclick="submitPractice()">Submit</button>
+
+<script>
+let score = 0;
+let total = {{ questions|length }};
+
+function searchQuestions() {
+    const value = document.getElementById("searchBox").value.toLowerCase();
+    document.querySelectorAll(".question").forEach(q => {
+        q.style.display = q.dataset.description.includes(value) ? "block" : "none";
+    });
+}
+
+function checkAnswer(radio) {
+    const result = radio.closest(".question").querySelector(".result");
+    if (radio.dataset.correct === "True") {
+        result.innerHTML = "✔ Correct";
+        result.className = "result correct";
+    } else {
+        result.innerHTML = "✖ Wrong";
+        result.className = "result wrong";
+    }
+}
+
+function submitPractice() {
+    let correct = 0;
+    let wrong = 0;
+
+    document.querySelectorAll(".question").forEach(q => {
+        const selected = q.querySelector("input[type=radio]:checked");
+        if (selected) {
+            if (selected.dataset.correct === "True") {
+                correct++;
+            } else {
+                wrong++;
+            }
+        }
+    });
+
+    let finalScore = correct - (wrong * 0.5);
+    let percentage = ((finalScore / total) * 100).toFixed(2);
+    let passed = percentage >= 70;
+
+    alert(
+        `Score: ${finalScore}\nPercentage: ${percentage}%\nResult: ${passed ? "PASSED" : "FAILED"}`
+    );
+}
+</script>
+
+</body>
+</html>
