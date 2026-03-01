@@ -43,7 +43,7 @@ async def start_session(payload: dict = Body(...)):
     if certification_version == 17:
         questions = sorted(random.sample(CERT_17_QUESTIONS, question_count), key=lambda x: x["id"])
     elif certification_version == 19:
-        questions = random.sample(CERT_17_QUESTIONS, question_count)
+        questions = sorted(random.sample(CERT_19_QUESTIONS, question_count), key=lambda x: x['QuestionId'])
     else:
         questions = random.sample(QUESTION_POOL, question_count)
 
