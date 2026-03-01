@@ -122,7 +122,7 @@ async def submit_exam(session_id: str):
             "timestamp": time.time()
         }
 
-        with open(f"reports/report_{session_id}.json", "w") as file:
+        with open(f"src/reports/report_{session_id}.json", "w") as file:
             json.dump(report, file, indent=4)
 
         return report
