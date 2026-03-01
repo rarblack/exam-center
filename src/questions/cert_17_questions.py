@@ -1313,7 +1313,7 @@ QUESTIONS = [
             },
             {
                 "text": "Only if the 2 other answers are true",
-                "answer": False,
+                "answer": True,
                 "image": None
             }
         ]
@@ -1405,7 +1405,7 @@ QUESTIONS = [
             },
             {
                 "text": "Yes, the Discount can be modified directly on the purchase order line when creating an RFQ",
-                "answer": False,
+                "answer": True,
                 "image": None
             }
         ]
@@ -1424,7 +1424,7 @@ QUESTIONS = [
             },
             {
                 "text": "Yes",
-                "answer": False,
+                "answer": True,
                 "image": None
             }
         ]
@@ -1453,7 +1453,7 @@ QUESTIONS = [
             },
             {
                 "text": "All of the above",
-                "answer": False,
+                "answer": True,
                 "image": None
             }
         ]
@@ -1468,7 +1468,7 @@ QUESTIONS = [
         "choices": [
             {
                 "text": "It works as a filter. Only the tasks in status corresponding to the selected color will be displayed in this stage",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -1492,7 +1492,7 @@ QUESTIONS = [
             },
             {
                 "text": "Sub-tasks can have their own sub-tasks",
-                "answer": False,
+                "answer": True,
                 "image": None
             }
         ]
@@ -1555,7 +1555,7 @@ QUESTIONS = [
         "choices": [
             {
                 "text": "Milestones have to be manually marked as reached",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -1580,7 +1580,7 @@ QUESTIONS = [
             },
             {
                 "text": "Number of completed/existing subtasks",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -1649,7 +1649,7 @@ QUESTIONS = [
         "choices": [
             {
                 "text": "Because timesheets still need to be encoded and linked to the corresponding sales order",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -1834,7 +1834,7 @@ QUESTIONS = [
             },
             {
                 "text": "Sum of the years",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -1974,12 +1974,12 @@ QUESTIONS = [
             },
             {
                 "text": "By going to the journal entry and changing it, but only if it's in draft status",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
                 "text": "By first enabling 'Editable settings' in Accounting > Configurations, and then going to the journal entry and changing it",
-                "answer": True,
+                "answer": False,
                 "image": None
             },
             {
@@ -2085,7 +2085,7 @@ QUESTIONS = [
             },
             {
                 "text": "There is a common fiscal period handled by the parent company and reflected in the branches",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2109,7 +2109,7 @@ QUESTIONS = [
         "choices": [
             {
                 "text": "In the Accounting settings, enable the 'Total amount of invoice in letters' checkbox",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2168,7 +2168,7 @@ QUESTIONS = [
             },
             {
                 "text": "When receipt is validated",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2235,7 +2235,7 @@ QUESTIONS = [
         "choices": [
             {
                 "text": "Yes",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2461,7 +2461,7 @@ QUESTIONS = [
         "choices": [
             {
                 "text": "Yes",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2610,7 +2610,7 @@ QUESTIONS = [
             },
             {
                 "text": "On the BoM 'Overview'",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2629,7 +2629,7 @@ QUESTIONS = [
         "choices": [
             {
                 "text": "The work order card fades away, and the card for the next work order appears in the Shop Floor module",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2639,7 +2639,7 @@ QUESTIONS = [
             },
             {
                 "text": "The work order card remains visible, but is marked as 'Done'",
-                "answer": True,
+                "answer": False,
                 "image": None
             }
         ]
@@ -2747,7 +2747,7 @@ QUESTIONS = [
             },
             {
                 "text": "By enabling paid courses in the settings and setting the enroll policy to be 'on payment'",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -2771,7 +2771,7 @@ QUESTIONS = [
             },
             {
                 "text": "Payroll > Configuration > Salary: Structure Types > Structure Type form > Default Work Entry Type",
-                "answer": False,
+                "answer": True,
                 "image": None
             },
             {
@@ -3062,12 +3062,12 @@ QUESTIONS = [
             "choices": [
                 {
                     "text": "The footer is modified for all invoice reports",
-                    "answer": True,
+                    "answer": False,
                     "image": None
                 },
                 {
                     "text": "The footer is modified for all reports within the same model",
-                    "answer": False,
+                    "answer": True,
                     "image": None
                 },
                 {

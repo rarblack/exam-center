@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Practice Quiz</title>
+    <title>Questionary</title>
     <style>
         body { font-family: Arial; margin: 40px; }
         .question { margin-bottom: 25px; border-bottom:1px solid #ddd; padding-bottom:15px; }
@@ -29,42 +29,102 @@
 
 <div id="questions">
 
-{% for q in questions %}
-<div class="question" data-description="{{ q.description | lower }}">
-    <h3>Question {{ q.id }}</h3>
-    <p>{{ q.description }}</p>
+    {% for question in questions %}
 
-    {% for choice in q.choices %}
-        <label>
-            <input type="radio"
-                   name="q{{ q.id }}"
-                   data-correct="{{ choice.answer }}"
-                   onclick="checkAnswer(this)">
-            {{ choice.text }}
-        </label><br>
+        {% if question.structure == 1 %}
+
+            <div class="question"
+                id="question-{{ question.QuestionId }}"
+                data-description="{{ question.QuestionImageText | join(' ') | lower }}">
+
+
+                <h3>Question {{ loop.index }}</h3>
+
+                {% for text in question.QuestionImageText %}
+                    <p>{{ text }}</p>
+                {% endfor %}
+
+                {% for img in question.QuestionImages %}
+                    {% if img %}
+                        <img src="data:image/png;base64,{{ img }}" width="50%">
+                    {% endif %}
+                {% endfor %}
+
+                <div>
+                    {% for opt in question.examDemoOptionDto %}
+                        <label>
+                            <input type="radio"
+                                name="q{{ question.QuestionId }}"
+                                data-correct="{{ opt.CHOICEOPTION }}"
+                                onclick="checkAnswer(this)">
+                            {{ opt.CHOICETEXT }}
+
+                            {% if opt.CHOICEIMAGE %}
+                                <img src="data:image/png;base64,{{ opt.CHOICEIMAGE }}">
+                            {% endif %}
+                        </label>
+                        <br>
+                    {% endfor %}
+                </div>
+
+                <p class="result"></p>
+            </div>
+
+        {% else %}
+
+            <div class="question" data-description="{{ question.description | lower }}">
+                
+                <h3>Question {{ loop.index }}</h3>
+
+                <p>Module: {{ question.module }}</p>
+                
+                <p>{{ question.description }}</p>
+
+                {% for img in question.images %}
+                    {% if img %}
+                        <img src="{% if img.startswith('data:image') %}{{ img }}{% else %}data:image/png;base64,{{ img }}{% endif %}" width="50%"/>
+                    {% endif %}
+                {% endfor %}
+
+                <div>
+                    {% for choice in question.choices %}
+                        <label>
+                            <input type="radio"
+                                name="q{{ question.id }}"
+                                data-correct="{{ choice.answer }}"
+                                onclick="checkAnswer(this)">
+                            {{ choice.text }}
+                        </label><br>
+                    {% endfor %}
+                </div>
+
+                <p class="result"></p>
+            </div>
+
+
+        {% endif %}
+
     {% endfor %}
-
-    <p class="result"></p>
-</div>
-{% endfor %}
 
 </div>
 
 <button class="submit-btn" onclick="submitPractice()">Submit</button>
 
 <script>
-let score = 0;
-let total = {{ questions|length }};
+    let score = 0;
+    let total = {{ questions|length }};
 
-function searchQuestions() {
-    const value = document.getElementById("searchBox").value.toLowerCase();
-    document.querySelectorAll(".question").forEach(q => {
-        q.style.display = q.dataset.description.includes(value) ? "block" : "none";
-    });
-}
+    function searchQuestions() {
+        const value = document.getElementById("searchBox").value.toLowerCase();
+
+        document.querySelectorAll(".question").forEach(question => {
+            question.style.display = question.dataset.description.includes(value) ? "block" : "none";
+        });
+    }
 
 function checkAnswer(radio) {
     const result = radio.closest(".question").querySelector(".result");
+
     if (radio.dataset.correct === "True") {
         result.innerHTML = "✔ Correct";
         result.className = "result correct";
@@ -78,8 +138,9 @@ function submitPractice() {
     let correct = 0;
     let wrong = 0;
 
-    document.querySelectorAll(".question").forEach(q => {
-        const selected = q.querySelector("input[type=radio]:checked");
+    document.querySelectorAll(".question").forEach(question => {
+        const selected = question.querySelector("input[type=radio]:checked");
+
         if (selected) {
             if (selected.dataset.correct === "True") {
                 correct++;

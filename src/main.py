@@ -9,18 +9,18 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 
 from questions.cert_17_questions import QUESTIONS as CERT_17_QUESTIONS
-from questions.cert_18_questions import QUESTIONS as CERT_18_QUESTIONS
+from questions.cert_19_questions import QUESTIONS as CERT_19_QUESTIONS
 
 app = FastAPI()
 templates = Jinja2Templates(directory="src/templates")
 
-QUESTION_POOL = CERT_17_QUESTIONS
+QUESTION_POOL = CERT_17_QUESTIONS + CERT_19_QUESTIONS
 
 exam_sessions: dict[str, Any] = {}
 
 @app.get("/", response_class=HTMLResponse)
 async def quiz_page(request: Request):
-    return templates.TemplateResponse("quiz.html", {
+    return templates.TemplateResponse("questionary.html", {
         "request": request,
         "questions": QUESTION_POOL
     })
@@ -42,8 +42,8 @@ async def start_session(payload: dict = Body(...)):
     questions = None
     if certification_version == 17:
         questions = sorted(random.sample(CERT_17_QUESTIONS, question_count), key=lambda x: x["id"])
-    elif certification_version == 18:
-        questions = random.sample(CERT_18_QUESTIONS, question_count)
+    elif certification_version == 19:
+        questions = random.sample(CERT_17_QUESTIONS, question_count)
     else:
         questions = random.sample(QUESTION_POOL, question_count)
 
